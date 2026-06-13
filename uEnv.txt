@@ -1,0 +1,18 @@
+console=ttyS0,115200n8
+
+ipaddr=192.168.7.2
+serverip=192.168.7.1
+gatewayip=192.168.7.1
+netmask=255.255.255.0
+
+loadaddr=0x82000000
+fdtaddr=0x88000000
+
+rootpath=/srv/nfs/bbb
+nfsopts=nfsvers=3,tcp,nolock,wsize=1024,rsize=1024
+
+loadtftp=echo Booting from network ...; tftpboot ${loadaddr} uImage; tftpboot ${fdtaddr} am335x-boneblack.dtb
+
+netargs=setenv bootargs console=${console} loglevel=8 ignore_loglevel root=/dev/nfs rw nfsroot=${serverip}:${rootpath},${nfsopts} ip=${ipaddr}:${serverip}:${gatewayip}:${netmask}:bbb:eth0:off rootwait rootdelay=5
+
+uenvcmd=setenv autoload no; run loadtftp; run netargs; bootm ${loadaddr} - ${fdtaddr}
